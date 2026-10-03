@@ -17,6 +17,58 @@ A web-based request management system built with Laravel and MySQL, designed for
 - Composer
 - Git
 
+## Request Data Model
+
+### Request Table Structure
+
+The `requests` table stores all incoming requests with the following fields:
+
+| Field | Type | Constraint | Purpose |
+|-------|------|-----------|---------|
+| id | BIGINT UNSIGNED | Primary Key | Unique request identifier |
+| requester_name | VARCHAR(100) | Required | Name of person requesting |
+| requester_email | VARCHAR(255) | Required | Contact email address |
+| item_name | VARCHAR(150) | Required | Item or service name |
+| quantity | UNSIGNED INT | Required, > 0 | Quantity requested |
+| purpose | TEXT | Required | Reason for request |
+| status | VARCHAR(20) | Default: pending | Request status (pending, approved, rejected, processing) |
+| created_at | TIMESTAMP | Auto | Creation timestamp |
+| updated_at | TIMESTAMP | Auto | Last update timestamp |
+
+### Migration Command
+
+To create the requests table, run:
+
+```bash
+php artisan migrate
+```
+
+### User Stories
+
+#### Story 1: Requester
+As a requester, I want to submit a request for items or services, so that I can obtain what I need through the proper approval process.
+
+#### Story 2: Staff Reviewer
+As a staff reviewer, I want to view all pending requests and update their status, so that I can track which requests are approved, rejected, or under review.
+
+#### Story 3: Record Keeper
+As a record keeper, I want to maintain a complete audit trail of all requests with their creation and modification dates, so that I can ensure data integrity and compliance with record-keeping requirements.
+
+### Verify the Request Table
+
+To check if the migration was successful:
+
+```bash
+php artisan migrate:status
+```
+
+To view the table structure in MySQL:
+
+1. Open phpMyAdmin
+2. Select database: `laravel_request_system_db`
+3. Click table: `requests`
+4. View the Structure tab
+
 ## Installation Instructions
 
 ### 1. Clone the Repository
