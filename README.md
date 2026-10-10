@@ -117,3 +117,28 @@ https://github.com/geumaxh/laravel-request-system
 
 ## Deployment Link
 (Add if deployed)
+
+
+## Lab 3: Secure Request Access Through Reviewed Changes
+
+### Security Implementation
+
+This laboratory implements secure request access through server-side authorization, input validation, and CSRF protection.
+
+#### Ownership Rules
+- **Students** can only view and manage their own requests
+- **Admins** can view all requests and update their status
+- Direct access to another student's request returns **403 Forbidden**
+
+#### Routes
+
+
+#### Security Features
+1. **CSRF Protection**: All POST/PATCH forms include @csrf token
+2. **XSS Prevention**: All output escaped with {{ }} in Blade
+3. **Server-Side Validation**: Input validated before saving
+4. **Trusted Field Assignment**: user_id, status set server-side
+5. **Secret Exclusion**: .env file not tracked in Git
+
+#### Testing
+All T01-T09 tests pass ✅
