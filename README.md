@@ -117,3 +117,66 @@ https://github.com/geumaxh/laravel-request-system
 
 ## Deployment Link
 (Add if deployed)
+
+
+## Lab 3: Secure Request Access Through Reviewed Changes
+
+### Security Implementation
+
+This laboratory implements secure request access through server-side authorization, input validation, and CSRF protection.
+
+#### Ownership Rules
+- **Students** can only view and manage their own requests
+- **Admins** can view all requests and update their status
+- Direct access to another student's request returns **403 Forbidden**
+
+#### Access Control Methods
+- All request routes protected with `auth` middleware
+- Authorization enforced via `ServiceRequestPolicy`
+- List views scoped by `user_id` (students see only their own; admins see all)
+
+#### Request Routes
+
+
+#### Input Validation Rules
+- **item_name**: required, string, max 150 characters
+- **quantity**: required, integer, minimum 1
+- **purpose**: required, string, max 2000 characters
+- **status**: admin only, must be one of: pending, approved, rejected
+
+#### Security Features Implemented
+1. **CSRF Protection**: All POST/PATCH forms include `@csrf` token
+2. **XSS Prevention**: All output escaped with `{{ }}` in Blade templates
+3. **Server-Side Validation**: Input validated before database writes
+4. **Trusted Field Assignment**: user_id, status, and requester info assigned server-side (not from user input)
+5. **Secret Exclusion**: .env file excluded from Git via .gitignore
+6. **Authorization Checks**: Gate::authorize() enforced before reading or writing protected data
+
+#### File Responsibilities
+- **app/Models/ServiceRequest.php** - Data model with mass-assignment protection
+- **app/Policies/ServiceRequestPolicy.php** - Authorization rules (viewAny, view, create, updateStatus)
+- **app/Http/Controllers/ServiceRequestController.php** - Business logic, validation, trusted field assignment
+- **resources/views/requests/** - Blade templates with CSRF tokens and escaped output
+- **routes/web.php** - Route definitions with auth middleware
+
+#### Testing Results
+All T01-T10 security tests pass:
+- T01: Guest redirect to login ✓
+- T02: Students see only own requests ✓
+- T03: Access denied to other student's request (403) ✓
+- T04: Students cannot update status ✓
+- T05: Admin can view all and update status ✓
+- T06: Invalid input rejected ✓
+- T07: Cannot spoof user_id/status/role ✓
+- T08: HTML/XSS escaped ✓
+- T09: CSRF tokens required ✓
+- T10: Invalid status rejected ✓
+
+#### Dependency Audit
+
+
+#### Deployment Security
+- APP_DEBUG=false in production
+- .env never tracked in Git
+- Passwords hashed with Laravel Hash::make()
+- Secret exposure: revoke/rotate, remove file, clean history
