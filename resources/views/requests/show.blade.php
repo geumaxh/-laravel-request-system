@@ -1,77 +1,134 @@
+
 @extends('layouts.app')
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Request Details') }}</div>
 
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Request ID:</strong></label>
-                        <p>{{ $serviceRequest->id }}</p>
-                    </div>
+    <h1>Request Details</h1>
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Requester Name:</strong></label>
-                        <p>{{ $serviceRequest->requester_name }}</p>
-                    </div>
+    {{-- Success message after updating status --}}
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Requester Email:</strong></label>
-                        <p>{{ $serviceRequest->requester_email }}</p>
-                    </div>
+    {{-- Validation errors --}}
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Item Name:</strong></label>
-                        <p>{{ $serviceRequest->item_name }}</p>
-                    </div>
+    {{-- Request information --}}
+    <div class="card mb-3">
+        <div class="card-body">
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Quantity:</strong></label>
-                        <p>{{ $serviceRequest->quantity }}</p>
-                    </div>
+            <p>
+                <strong>Request ID:</strong>
+                {{ $serviceRequest->id }}
+            </p>
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Purpose:</strong></label>
-                        <p>{{ $serviceRequest->purpose }}</p>
-                    </div>
+            <p>
+                <strong>Requester Name:</strong>
+                {{ $serviceRequest->requester_name }}
+            </p>
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Status:</strong></label>
-                        <p>
-                            <span class="badge bg-warning">{{ $serviceRequest->status }}</span>
-                        </p>
-                    </div>
+            <p>
+                <strong>Requester Email:</strong>
+                {{ $serviceRequest->requester_email }}
+            </p>
 
-                    {{-- ADMIN ONLY: Update Status Form --}}
-                    @can('updateStatus', $serviceRequest)
-                        <hr>
-                        <h5>Update Status (Admin Only)</h5>
-                        <form method="POST" action="{{ route('requests.updateStatus', $serviceRequest->id) }}">
-                            @csrf
-                            @method('PATCH')
+            <p>
+                <strong>Item Name:</strong>
+                {{ $serviceRequest->item_name }}
+            </p>
 
-                            <div class="form-group mb-3">
-                                <label for="status" class="form-label">New Status:</label>
-                                <select id="status" name="status" class="form-select" required>
-                                    <option value="pending" {{ $serviceRequest->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="approved" {{ $serviceRequest->status === 'approved' ? 'selected' : '' }}>Approved</option>
-                                    <option value="rejected" {{ $serviceRequest->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                </select>
-                            </div>
+            <p>
+                <strong>Quantity:</strong>
+                {{ $serviceRequest->quantity }}
+            </p>
 
-                            <button type="submit" class="btn btn-success">Update Status</button>
-                        </form>
-                    @endcan
+            <p>
+                <strong>Purpose:</strong>
+                {{ $serviceRequest->purpose }}
+            </p>
 
-                    <div class="mt-3">
-                        <a href="{{ route('requests.index') }}" class="btn btn-secondary">Back to List</a>
-                    </div>
-                </div>
-            </div>
+            <p>
+                <strong>Current Status:</strong>
+                {{ ucfirst($serviceRequest->status) }}
+            </p>
+
+            
+<p>
+    <strong>Date Submitted:</strong>
+    {{ $serviceRequest->created_at
+        ? $serviceRequest->created_at->format('M d, Y h:i A')
+        : 'Not available' }}
+</p>
+
+
         </div>
     </div>
+
+    {{-- Admin status update form --}}
+    @can('updateStatus', $serviceRequest)
+        <div class="card mb-3">
+            <div class="card-header">
+                Update Request Status
+            </div>
+
+            <div class="card-body">
+                <form method="POST"
+                      action="{{ route('requests.updateStatus', $serviceRequest) }}">
+
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="mb-3">
+                        <label for="status" class="form-label">
+                            Select Status
+                        </label>
+
+                        <select name="status"
+                                id="status"
+                                class="form-select"
+                                required>
+
+                            <option value="pending"
+                                {{ $serviceRequest->status === 'pending' ? 'selected' : '' }}>
+                                Pending
+                            </option>
+
+                            <option value="approved"
+                                {{ $serviceRequest->status === 'approved' ? 'selected' : '' }}>
+                                Approved
+                            </option>
+
+                            <option value="rejected"
+                                {{ $serviceRequest->status === 'rejected' ? 'selected' : '' }}>
+                                Rejected
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Update Status
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    @endcan
+
+    <a href="{{ route('requests.index') }}" class="btn btn-secondary">
+        Back to Requests
+    </a>
+
 </div>
 @endsection
