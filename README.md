@@ -125,10 +125,7 @@ https://github.com/geumaxh/laravel-request-system
 
 This laboratory implements secure request access through server-side authorization, input validation, and CSRF protection.
 
-#### Ownership Rules
-- **Students** can only view and manage their own requests
-- **Admins** can view all requests and update their status
-- Direct access to another student's request returns **403 Forbidden**
+#### Ownership Rules - Students can view only their own requests; admins see all
 
 #### Access Control Methods
 - All request routes protected with `auth` middleware
