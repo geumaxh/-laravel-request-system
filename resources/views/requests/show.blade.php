@@ -66,9 +66,7 @@
             
 <p>
     <strong>Date Submitted:</strong>
-    {{ $serviceRequest->created_at
-        ? $serviceRequest->created_at->format('M d, Y h:i A')
-        : 'Not available' }}
+   {{ $serviceRequest->created_at?->format('M d, Y h:i A') ?? 'Not available' }}
 </p>
 
 

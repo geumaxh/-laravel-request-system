@@ -57,9 +57,7 @@
                                         </td>
 
                                         <td>
-                                            {{ $request->created_at
-                                                ? $request->created_at->format('M d, Y')
-                                                : 'N/A' }}
+                                         {{ $request->created_at?->format('M d, Y h:i A') ?? 'N/A' }}
                                         </td>
 
                                         <td>

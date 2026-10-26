@@ -1,0 +1,46 @@
+services:
+  # Database service: runs MySQL 8.0 and stores data in the db_data volume
+  db:
+    image: mysql:8.0
+    # Loads the private settings file, which Git ignores
+    env_file:
+      - .env.container
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel_request_container_db}
+      MYSQL_USER: ${DB_USERNAME:-request_app}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-password2}
+    # Keeps the database files in a named volume, so records survive container replacement
+    volumes:
+      - db_data:/var/lib/mysql
+    # Checks every 10 seconds whether MySQL responds
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # App service: builds the Laravel image and waits for the database to be healthy
+  app:
+    # Builds the image from the Dockerfile in this folder
+    build: .
+    env_file:
+      - .env.container
+    # Starts the app only after the database passes its health check
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Web service: Nginx receives browser requests on port 8080 and passes PHP to app
+  web:
+    image: nginx:1.27
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
+# Named volume that keeps the database records
+volumes:
+  db_data:
