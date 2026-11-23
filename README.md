@@ -139,3 +139,51 @@ This laboratory implements secure request access through server-side authorizati
 
 #### Testing
 All T01-T09 tests pass ✅
+
+## Lab 4: Docker Container Environment
+
+### Requirements
+- Docker Desktop
+- Git
+- Visual Studio Code
+- PHP and Composer are provided through the application container.
+
+### Services
+
+| Service | Purpose |
+|---|---|
+| app | Runs the Laravel application |
+| db | Provides the MySQL database |
+| web | Serves the application through Nginx |
+
+### Configuration
+Create a local `.env.container` file based on `.env.container.example`. Configure the application key and database credentials locally. Do not commit files containing secrets.
+
+### Build and Start
+```bash
+docker compose --env-file .env.container -p reviewtest up -d --build
+```
+
+### Database Migration
+```bash
+docker compose --env-file .env.container -p reviewtest exec app php artisan migrate
+```
+
+### Health Check
+```bash
+docker compose --env-file .env.container -p reviewtest ps
+```
+
+Confirm that the database is healthy and the application services are running.
+
+### Persistence Test
+Record the actual results of restarting the containers and checking whether previously saved data remains available.
+
+### Reproduction Steps
+1. Clone the `feature/lab4-containers` branch.
+2. Create `.env.container` using the example configuration.
+3. Build and start the Docker services.
+4. Run the migrations.
+5. Open `http://127.0.0.1:8081/login`.
+6. Test login and request functionality.
+7. Verify container health and data persistence.
