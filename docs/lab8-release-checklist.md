@@ -18,10 +18,10 @@
 - APP_KEY kept (yes/no):yes
 
 ## D. Approval 
-- Approver:
-- Decision:
-- Date and time:
-- Approval reference:
+- Approver:hermionie-hermionieb
+- Decision:Approved
+- Date and time: 11-23-26 1:22AM
+- Approval reference:(https://github.com/geumaxh/-laravel-request-system/pull/4)
 
 ## E. Smoke tests 
 - Health and revision:
