@@ -254,3 +254,16 @@ After rollback, the following checks were performed:
 3. The previously existing `STAGE-LIB-08` request remained available.
 
 The simulated fault was kept on its separate branch and was not merged into the main branch or pull request.
+
+### Lab 8 Completion Checklist
+
+- [x] Docker services successfully deployed.
+- [x] Database migrations verified.
+- [x] Student and Admin login tested.
+- [x] Request submission and approval tested.
+- [x] Team-made simulated fault introduced on a separate branch.
+- [x] Faulty release deployed and tested.
+- [x] Application rolled back to the known-good release.
+- [x] Request creation verified after rollback.
+- [x] Existing `STAGE-LIB-08` record verified after rollback.
+- [x] README deployment and recovery documentation updated.
