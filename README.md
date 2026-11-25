@@ -139,3 +139,131 @@ This laboratory implements secure request access through server-side authorizati
 
 #### Testing
 All T01-T09 tests pass ✅
+
+## Lab 4: Docker Container Environment
+
+### Requirements
+- Docker Desktop
+- Git
+- Visual Studio Code
+- PHP and Composer are provided through the application container.
+
+### Services
+
+| Service | Purpose |
+|---|---|
+| app | Runs the Laravel application |
+| db | Provides the MySQL database |
+| web | Serves the application through Nginx |
+
+### Configuration
+Create a local `.env.container` file based on `.env.container.example`. Configure the application key and database credentials locally. Do not commit files containing secrets.
+
+### Build and Start
+```bash
+docker compose --env-file .env.container -p reviewtest up -d --build
+```
+
+### Database Migration
+```bash
+docker compose --env-file .env.container -p reviewtest exec app php artisan migrate
+```
+
+### Health Check
+```bash
+docker compose --env-file .env.container -p reviewtest ps
+```
+
+Confirm that the database is healthy and the application services are running.
+
+### Persistence Test
+Record the actual results of restarting the containers and checking whether previously saved data remains available.
+
+### Reproduction Steps
+1. Clone the `feature/lab4-containers` branch.
+2. Create `.env.container` using the example configuration.
+3. Build and start the Docker services.
+4. Run the migrations.
+5. Open `http://127.0.0.1:8081/login`.
+6. Test login and request functionality.
+7. Verify container health and data persistence.
+
+## Lab 8: Release Management, Deployment, and Rollback
+
+### Deployment Environment
+
+The Laravel Request System was deployed using Docker Compose with three services:
+
+- **app:** Runs the Laravel application using PHP-FPM.
+- **web:** Serves the application through Nginx.
+- **db:** Provides the MySQL database.
+
+### Deployment Configuration
+
+The `.env.container` file was used for container-specific environment variables. Sensitive credentials and application keys were kept out of version control.
+
+Build and start the application:
+
+```bash
+docker compose --env-file .env.container up -d --build app web
+```
+
+Check container status:
+
+```bash
+docker compose --env-file .env.container ps
+```
+
+### Database Verification
+
+The database migration status was checked to confirm that the required migrations had been applied.
+
+```bash
+docker compose --env-file .env.container exec app php artisan migrate:status
+```
+
+### User Role Testing
+
+The system was tested using two types of accounts:
+
+- **Student:** Can submit requests and view their own requests.
+- **Admin:** Can view requests from students and manage request statuses.
+
+Testing included login, request submission, request visibility, and administrative approval.
+
+### Simulated Fault and Rollback
+
+A team-made simulated fault was introduced on a separate branch named `lab8-fault-simulation`.
+
+The `item_name` validation rule was temporarily modified to reject normal request submissions. The faulty release was committed separately:
+
+- **Branch:** `lab8-fault-simulation`
+- **Commit:** `d5d9d1f42ab7c58f7dcf03a46a55e8723a7afd76`
+- **Commit message:** Simulate request creation failure for Lab 8 rollback
+
+The faulty release was deployed and tested. Student A's attempted submission of `STAGE-LIB-08` was rejected by validation.
+
+The application was then rolled back to the known-good `feature/lab4-containers` branch and redeployed using Docker Compose.
+
+### Rollback Verification
+
+After rollback, the following checks were performed:
+
+1. The application was accessible and login worked again.
+2. Student A could successfully create a new request.
+3. The previously existing `STAGE-LIB-08` request remained available.
+
+The simulated fault was kept on its separate branch and was not merged into the main branch or pull request.
+
+### Lab 8 Completion Checklist
+
+- [x] Docker services successfully deployed.
+- [x] Database migrations verified.
+- [x] Student and Admin login tested.
+- [x] Request submission and approval tested.
+- [x] Team-made simulated fault introduced on a separate branch.
+- [x] Faulty release deployed and tested.
+- [x] Application rolled back to the known-good release.
+- [x] Request creation verified after rollback.
+- [x] Existing `STAGE-LIB-08` record verified after rollback.
+- [x] README deployment and recovery documentation updated.

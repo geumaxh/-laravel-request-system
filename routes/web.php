@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -34,3 +33,4 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])
     ->name('home');
+
